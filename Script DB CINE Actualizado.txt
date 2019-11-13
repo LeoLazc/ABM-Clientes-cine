@@ -1,0 +1,734 @@
+CREATE DATABASE CINE
+GO
+
+USE CINE
+GO
+
+SET DATEFORMAT dmy
+
+CREATE TABLE Tipos_Salas (
+	id_tipo_sala int IDENTITY(1,1),
+	descripcion nvarchar (50) NOT NULL,
+	precio decimal(8,2)
+	CONSTRAINT pk_tipo_sala PRIMARY KEY(id_tipo_sala)
+)
+
+CREATE TABLE Salas (
+	id_sala int IDENTITY(1,1),
+	descripcion nvarchar (50) NOT NULL,
+	id_tipo_sala int,
+	capacidad_sala int
+	CONSTRAINT pk_salas PRIMARY KEY(id_sala)
+	CONSTRAINT fk_sala_tiposala FOREIGN KEY(id_tipo_sala) REFERENCES Tipos_Salas(id_tipo_sala)
+)
+
+CREATE TABLE Clasificaciones (
+	id_clasificacion int IDENTITY(1,1),
+	descripcion nvarchar (50) NOT NULL
+	CONSTRAINT pk_clasif PRIMARY KEY(id_clasificacion)
+)
+
+CREATE TABLE Paises (
+	id_pais int IDENTITY(1,1),
+	descripcion nvarchar(50)
+	CONSTRAINT pk_paises PRIMARY KEY(id_pais)
+)
+
+CREATE TABLE Clientes (
+	id_cliente int IDENTITY(1,1),
+	nombre nvarchar(50) NOT NULL,
+	apellido nvarchar(50) NOT NULL,
+	dni int NOT NULL,
+	fecha_nac date,
+	calle_direccion nvarchar(50),
+	nro_direccion int,
+	nro_telefono int,
+	email nvarchar(50), 
+	nacionalidad int,
+	fecha_alta datetime
+	CONSTRAINT pk_clientes PRIMARY KEY(id_cliente),
+	CONSTRAINT fk_cliente_paises FOREIGN KEY(nacionalidad) REFERENCES Paises(id_pais)
+)
+
+CREATE TABLE Generos_Peliculas (
+	id_genero int IDENTITY(1,1),
+	descripcion nvarchar(50)
+	CONSTRAINT pk_genero PRIMARY KEY(id_genero)
+)
+
+CREATE TABLE Peliculas (
+	id_pelicula int IDENTITY(1,1),
+	nombre_pelicula nvarchar (50) NOT NULL,
+	id_clasificacion int,
+	id_genero int,
+	doblaje bit,
+	pais_origen int
+	CONSTRAINT pk_peliculas PRIMARY KEY (id_pelicula),
+	CONSTRAINT fk_peli_clasif FOREIGN KEY(id_clasificacion) REFERENCES Clasificaciones (id_clasificacion),
+	CONSTRAINT fk_peli_paises FOREIGN KEY(pais_origen) REFERENCES Paises (id_pais),
+	CONSTRAINT fk_pelicula_genero FOREIGN KEY(id_genero) REFERENCES Generos_Peliculas (id_genero)
+)
+
+CREATE TABLE Formas_Pago (
+	id_forma_pago int IDENTITY(1,1),
+	descripcion nvarchar(50) NOT NULL
+	CONSTRAINT pk_forma_pago PRIMARY KEY(id_forma_pago)
+)
+
+CREATE TABLE Butacas (
+	id_butaca int IDENTITY(1,1),
+	fila char NOT NULL,
+	numero int NOT NULL
+	CONSTRAINT pk_butacas PRIMARY KEY(id_butaca)
+)
+
+CREATE TABLE Funciones (
+	id_funcion int IDENTITY(1,1),
+	id_sala int,
+	id_pelicula int,
+	fecha date NOT NULL,
+	hora time NOT NULL
+	CONSTRAINT pk_funciones PRIMARY KEY(id_funcion),
+	CONSTRAINT fk_funciones_salas FOREIGN KEY(id_sala) REFERENCES Salas(id_sala),
+	CONSTRAINT fk_funciones_peliculas FOREIGN KEY(id_pelicula) REFERENCES Peliculas(id_pelicula)
+)
+
+CREATE TABLE Tipos_Compras(
+	id_tipo_compra int IDENTITY(1,1),
+	descripcion nvarchar(50)
+	CONSTRAINT pk_tipo_compra PRIMARY KEY(id_tipo_compra) 
+)
+
+CREATE TABLE Comprobantes (
+	id_comprobante int IDENTITY(1,1),
+	id_cliente int,
+	id_tipo_compra int,
+	fecha datetime NOT NULL,
+	monto_total decimal (10,2)
+	CONSTRAINT pk_comprob PRIMARY KEY(id_comprobante),
+	CONSTRAINT fk_comp_cliente FOREIGN KEY(id_cliente) REFERENCES Clientes(id_cliente),
+	CONSTRAINT fk_comp_tipo_comp FOREIGN KEY(id_tipo_compra) REFERENCES Tipos_Compras(id_tipo_compra)
+)
+
+CREATE TABLE Tipos_Entradas(
+	id_tipo_entrada int IDENTITY(1,1),
+	descripcion nvarchar(50),
+	precio decimal(8,2)
+	CONSTRAINT pk_tipo_entrada PRIMARY KEY(id_tipo_entrada)
+)
+
+CREATE TABLE Promociones(
+	id_promocion int IDENTITY(1,1),
+	descripcion nvarchar(50),
+	porcentaje decimal(3,2)
+	CONSTRAINT pk_promociones PRIMARY KEY(id_promocion)
+)
+
+CREATE TABLE Detalle_Comprobantes (
+	id_detalle_comprobante int IDENTITY(1,1),
+	id_comprobante int,
+	id_funcion int,
+	id_tipo_entrada int,
+	id_promocion int
+	CONSTRAINT pk_detalle_comp PRIMARY KEY(id_detalle_comprobante),
+	CONSTRAINT fk_detcomp_comp FOREIGN KEY(id_comprobante) REFERENCES Comprobantes(id_comprobante),
+	CONSTRAINT fk_detcomp_funciones FOREIGN KEY(id_funcion) REFERENCES Funciones(id_funcion),
+	CONSTRAINT fk_detcomp_tipoent FOREIGN KEY(id_tipo_entrada) REFERENCES Tipos_Entradas(id_tipo_entrada),
+	CONSTRAINT fk_detcomp_promos FOREIGN KEY(id_promocion) REFERENCES Promociones(id_promocion)
+)
+
+CREATE TABLE Tickets (
+	id_ticket int IDENTITY(1,1),
+	id_cliente int,
+	id_detalle_comprobante int,
+	id_butaca int,	
+	reserva bit
+	CONSTRAINT pk_tickets PRIMARY KEY(id_ticket),
+	CONSTRAINT fk_ticket_cliente FOREIGN KEY(id_cliente) REFERENCES Clientes(id_cliente),
+	CONSTRAINT fk_tick_butacas FOREIGN KEY(id_butaca) REFERENCES Butacas(id_butaca),
+	CONSTRAINT fk_tick_comprob FOREIGN KEY(id_detalle_comprobante) REFERENCES Detalle_Comprobantes(id_detalle_comprobante)
+)
+
+CREATE TABLE Comprobantes_x_Formas_Pago (
+	id_comprobante int,
+	id_forma_pago int,
+	monto decimal (10,2)
+	CONSTRAINT pk_compxfp PRIMARY KEY(id_comprobante, id_forma_pago)
+	CONSTRAINT fk_compxfp_comprob FOREIGN KEY(id_comprobante) REFERENCES Comprobantes(id_comprobante),
+	CONSTRAINT fk_compxfp_fp FOREIGN KEY(id_forma_pago) REFERENCES Formas_Pago(id_forma_pago)
+)
+--***************************************************************************************************************
+
+INSERT INTO Tipos_Salas(descripcion, precio) VALUES('2D', 100.00)
+INSERT INTO Tipos_Salas(descripcion, precio) VALUES('3D', 150.00)
+INSERT INTO Tipos_Salas(descripcion, precio) VALUES('XD', 180.00)
+INSERT INTO Tipos_Salas(descripcion, precio) VALUES('Premium', 200.00)
+INSERT INTO Tipos_Salas(descripcion, precio) VALUES('Comfort', 230.00)
+
+
+INSERT INTO Salas(descripcion, id_tipo_sala, capacidad_sala) VALUES('Sala 1', 1, 60)
+INSERT INTO Salas(descripcion, id_tipo_sala, capacidad_sala) VALUES('Sala 2', 1, 60)
+INSERT INTO Salas(descripcion, id_tipo_sala, capacidad_sala) VALUES('Sala 3', 1, 60)
+INSERT INTO Salas(descripcion, id_tipo_sala, capacidad_sala) VALUES('Sala 4', 1, 60)
+INSERT INTO Salas(descripcion, id_tipo_sala, capacidad_sala) VALUES('Sala 5', 2, 60)
+INSERT INTO Salas(descripcion, id_tipo_sala, capacidad_sala) VALUES('Sala 6', 2, 60)
+INSERT INTO Salas(descripcion, id_tipo_sala, capacidad_sala) VALUES('Sala 7', 2, 60)
+INSERT INTO Salas(descripcion, id_tipo_sala, capacidad_sala) VALUES('Sala 8', 3, 60)
+INSERT INTO Salas(descripcion, id_tipo_sala, capacidad_sala) VALUES('Sala 9', 4, 40)
+INSERT INTO Salas(descripcion, id_tipo_sala, capacidad_sala) VALUES('Sala 10', 5, 30)
+
+
+INSERT INTO Clasificaciones(descripcion) VALUES('ATP')
+INSERT INTO Clasificaciones(descripcion) VALUES('+13')
+INSERT INTO Clasificaciones(descripcion) VALUES('+16')
+INSERT INTO Clasificaciones(descripcion) VALUES('+18')
+INSERT INTO Clasificaciones(descripcion) VALUES('C')
+
+
+INSERT INTO Paises(descripcion) VALUES ('Argentina')
+INSERT INTO Paises(descripcion) VALUES ('EEUU')
+INSERT INTO Paises(descripcion) VALUES ('Francia')
+INSERT INTO Paises(descripcion) VALUES ('Italia')
+INSERT INTO Paises(descripcion) VALUES ('Brasil')
+INSERT INTO Paises(descripcion) VALUES ('Uruguay')
+INSERT INTO Paises(descripcion) VALUES ('India')
+INSERT INTO Paises(descripcion) VALUES ('Inglaterra')
+INSERT INTO Paises(descripcion) VALUES ('Colombia')
+INSERT INTO Paises(descripcion) VALUES ('México')
+
+
+INSERT INTO Clientes(nombre, apellido, dni, fecha_nac, calle_direccion, nro_direccion, email, nacionalidad, fecha_alta)
+	VALUES('Carina', 'Zampini', 28456789, '02-06-1975', 'Falsa', 123, 'cari@gmail.com', 1, '10-07-2017')
+INSERT INTO Clientes(nombre, apellido, dni, fecha_nac, calle_direccion, nro_direccion, email, nacionalidad, fecha_alta)
+	VALUES('Osvaldo', 'Laport', 27756987, '02-08-1955', 'Falsa', 123, 'osvi@gmail.com', 1, '10-02-2018')
+INSERT INTO Clientes(nombre, apellido, dni, fecha_nac, calle_direccion, nro_direccion, email, nacionalidad, fecha_alta)
+	VALUES('Diego', 'Latorre', 25432189, '09-01-1972', 'Falsa', 123, 'puntita@gmail.com', 1, '11-02-2019')
+INSERT INTO Clientes(nombre, apellido, dni, fecha_nac, calle_direccion, nro_direccion, email, nacionalidad, fecha_alta)
+	VALUES('Pedro', 'Alfonso', 29455589, '11-06-1980', 'Falsa', 123, 'peter@gmail.com', 1, '05-07-2019')
+INSERT INTO Clientes(nombre, apellido, dni, fecha_nac, calle_direccion, nro_direccion, email, nacionalidad, fecha_alta)
+	VALUES('Romelu', 'Lukaku', 33445669, '02-11-1985', 'Falsa', 123, 'lukagol@gmail.com', 1, '06-09-2018')
+INSERT INTO Clientes(nombre, apellido, dni, fecha_nac, calle_direccion, nro_direccion, email, nacionalidad, fecha_alta)
+	VALUES('Carlos', 'Arano', 32654963, '09-05-1986', 'Falsa', 123, 'chiche@gmail.com', 1, '04-04-2017')
+INSERT INTO Clientes(nombre, apellido, dni, fecha_nac, calle_direccion, nro_direccion, email, nacionalidad, fecha_alta)
+	VALUES('María Sol', 'Perez', 30456789, '10-02-1988', 'Falsa', 123, 'lasobrideperez@gmail.com', 1, '07-07-2018')
+INSERT INTO Clientes(nombre, apellido, dni, fecha_nac, calle_direccion, nro_direccion, email, nacionalidad, fecha_alta)
+	VALUES('Soledad', 'Silveira', 25456789, '11-05-1956', 'Falsa', 123, 'solita@gmail.com', 1, '11-12-2017')
+INSERT INTO Clientes(nombre, apellido, dni, fecha_nac, calle_direccion, nro_direccion, email, nacionalidad, fecha_alta)
+	VALUES('María', 'Sharapova', 33123456, '05-02-1985', 'Falsa', 123, 'sugarpova@gmail.com', 1, '03-03-2019')
+INSERT INTO Clientes(nombre, apellido, dni, fecha_nac, calle_direccion, nro_direccion, email, nacionalidad, fecha_alta)
+	VALUES('Natalia', 'Jersonsky', 32444489, '06-11-1988', 'Falsa', 123, 'natijota@gmail.com', 1, '10-02-2018')
+INSERT INTO Clientes(nombre, apellido, dni, fecha_nac, calle_direccion, nro_direccion, email, nacionalidad, fecha_alta)
+	VALUES('Milton', 'Casco', 30456789, '08-08-1986', 'Falsa', 123, 'milton@gmail.com', 1, '08-03-2017')
+INSERT INTO Clientes(nombre, apellido, dni, fecha_nac, calle_direccion, nro_direccion, email, nacionalidad, fecha_alta)
+	VALUES('Diego', 'Maradona', 29411358, '04-01-1965', 'Falsa', 123, 'diegote@gmail.com', 1, '05-05-2017')
+INSERT INTO Clientes(nombre, apellido, dni, fecha_nac, calle_direccion, nro_direccion, email, nacionalidad, fecha_alta)
+	VALUES('Ester', 'Expósito', 48456789, '01-08-2000', 'Falsa', 123, 'esterexposito@gmail.com', 1, '01-09-2019')
+INSERT INTO Clientes(nombre, apellido, dni, fecha_nac, calle_direccion, nro_direccion, email, nacionalidad, fecha_alta)
+	VALUES('Ramón', 'Abila', 33321654, '11-01-1987', 'Falsa', 123, 'chanchope@gmail.com', 1, '10-06-2018')
+INSERT INTO Clientes(nombre, apellido, dni, fecha_nac, calle_direccion, nro_direccion, email, nacionalidad, fecha_alta)
+	VALUES('Charly', 'García', 18456789, '02-06-1950', 'Falsa', 123, 'charly@gmail.com', 1, '12-12-2018')
+
+
+INSERT INTO Generos_Peliculas(descripcion) VALUES('Acción')
+INSERT INTO Generos_Peliculas(descripcion) VALUES('Ciencia Ficción')
+INSERT INTO Generos_Peliculas(descripcion) VALUES('Comedia')
+INSERT INTO Generos_Peliculas(descripcion) VALUES('Drama')
+INSERT INTO Generos_Peliculas(descripcion) VALUES('Fantasía')
+INSERT INTO Generos_Peliculas(descripcion) VALUES('Melodrama')
+INSERT INTO Generos_Peliculas(descripcion) VALUES('Musical')
+INSERT INTO Generos_Peliculas(descripcion) VALUES('Romance')
+INSERT INTO Generos_Peliculas(descripcion) VALUES('Suspenso')
+INSERT INTO Generos_Peliculas(descripcion) VALUES('Terror')
+INSERT INTO Generos_Peliculas(descripcion) VALUES('Aventuras')
+INSERT INTO Generos_Peliculas(descripcion) VALUES('Bélico')
+INSERT INTO Generos_Peliculas(descripcion) VALUES('Animación')
+
+
+INSERT INTO Peliculas(nombre_pelicula, id_clasificacion, id_genero, doblaje, pais_origen) VALUES('Ad Astra: Hacia las estrellas', 2, 1, 0, 2)
+INSERT INTO Peliculas(nombre_pelicula, id_clasificacion, id_genero, doblaje, pais_origen) VALUES('Guasón', 3, 4, 0, 2)
+INSERT INTO Peliculas(nombre_pelicula, id_clasificacion, id_genero, doblaje, pais_origen) VALUES('Había una vez... en Hollywood', 3, 3, 0, 2)
+INSERT INTO Peliculas(nombre_pelicula, id_clasificacion, id_genero, doblaje, pais_origen) VALUES('It: Capítulo 2', 3, 10, 0, 8)
+INSERT INTO Peliculas(nombre_pelicula, id_clasificacion, id_genero, doblaje, pais_origen) VALUES('La odisea de los giles', 2, 11, 0, 1)
+-- 2018
+INSERT INTO Peliculas(nombre_pelicula, id_clasificacion, id_genero, doblaje, pais_origen) VALUES('La forma del agua', 4, 5, 0, 2)
+INSERT INTO Peliculas(nombre_pelicula, id_clasificacion, id_genero, doblaje, pais_origen) VALUES('Avengers: Infinity War', 2, 1, 0, 2)
+INSERT INTO Peliculas(nombre_pelicula, id_clasificacion, id_genero, doblaje, pais_origen) VALUES('Nace una estrella', 4, 8, 0, 2)
+INSERT INTO Peliculas(nombre_pelicula, id_clasificacion, id_genero, doblaje, pais_origen) VALUES('Los increíbles 2', 1, 3, 1, 2)
+-- 2017
+INSERT INTO Peliculas(nombre_pelicula, id_clasificacion, id_genero, doblaje, pais_origen) VALUES('Dunkerque', 2, 12, 0, 8)
+INSERT INTO Peliculas(nombre_pelicula, id_clasificacion, id_genero, doblaje, pais_origen) VALUES('Logan', 4, 1, 0, 2)
+INSERT INTO Peliculas(nombre_pelicula, id_clasificacion, id_genero, doblaje, pais_origen) VALUES('Blade Runner 2049', 4, 2, 0, 2)
+INSERT INTO Peliculas(nombre_pelicula, id_clasificacion, id_genero, doblaje, pais_origen) VALUES('Mujer Maravilla', 2, 1, 0, 2)
+INSERT INTO Peliculas(nombre_pelicula, id_clasificacion, id_genero, doblaje, pais_origen) VALUES('Coco', 1, 13, 1, 2)
+INSERT INTO Peliculas(nombre_pelicula, id_clasificacion, id_genero, doblaje, pais_origen) VALUES('Star Wars: Los últimos Jedi', 2, 2, 0, 2)
+INSERT INTO Peliculas(nombre_pelicula, id_clasificacion, id_genero, doblaje, pais_origen) VALUES('It: Capítulo 1', 3, 10, 0, 8)
+
+
+INSERT INTO Formas_Pago(descripcion) VALUES('Efectivo')
+INSERT INTO Formas_Pago(descripcion) VALUES('Tarjeta de Débito')
+INSERT INTO Formas_Pago(descripcion) VALUES('Tarjeta de Crédito')
+
+
+INSERT INTO Butacas(fila, numero) VALUES('A', 1)
+INSERT INTO Butacas(fila, numero) VALUES('A', 2)
+INSERT INTO Butacas(fila, numero) VALUES('A', 3)
+INSERT INTO Butacas(fila, numero) VALUES('A', 4)
+INSERT INTO Butacas(fila, numero) VALUES('A', 5)
+INSERT INTO Butacas(fila, numero) VALUES('A', 6)
+INSERT INTO Butacas(fila, numero) VALUES('A', 7)
+INSERT INTO Butacas(fila, numero) VALUES('A', 8)
+INSERT INTO Butacas(fila, numero) VALUES('A', 9)
+INSERT INTO Butacas(fila, numero) VALUES('A', 10)
+INSERT INTO Butacas(fila, numero) VALUES('B', 1)
+INSERT INTO Butacas(fila, numero) VALUES('B', 2)
+INSERT INTO Butacas(fila, numero) VALUES('B', 3)
+INSERT INTO Butacas(fila, numero) VALUES('B', 4)
+INSERT INTO Butacas(fila, numero) VALUES('B', 5)
+INSERT INTO Butacas(fila, numero) VALUES('B', 6)
+INSERT INTO Butacas(fila, numero) VALUES('B', 7)
+INSERT INTO Butacas(fila, numero) VALUES('B', 8)
+INSERT INTO Butacas(fila, numero) VALUES('B', 9)
+INSERT INTO Butacas(fila, numero) VALUES('B', 10)
+INSERT INTO Butacas(fila, numero) VALUES('C', 1)
+INSERT INTO Butacas(fila, numero) VALUES('C', 2)
+INSERT INTO Butacas(fila, numero) VALUES('C', 3)
+INSERT INTO Butacas(fila, numero) VALUES('C', 4)
+INSERT INTO Butacas(fila, numero) VALUES('C', 5)
+INSERT INTO Butacas(fila, numero) VALUES('C', 6)
+INSERT INTO Butacas(fila, numero) VALUES('C', 7)
+INSERT INTO Butacas(fila, numero) VALUES('C', 8)
+INSERT INTO Butacas(fila, numero) VALUES('C', 9)
+INSERT INTO Butacas(fila, numero) VALUES('C', 10)
+INSERT INTO Butacas(fila, numero) VALUES('D', 1)
+INSERT INTO Butacas(fila, numero) VALUES('D', 2)
+INSERT INTO Butacas(fila, numero) VALUES('D', 3)
+INSERT INTO Butacas(fila, numero) VALUES('D', 4)
+INSERT INTO Butacas(fila, numero) VALUES('D', 5)
+INSERT INTO Butacas(fila, numero) VALUES('D', 6)
+INSERT INTO Butacas(fila, numero) VALUES('D', 7)
+INSERT INTO Butacas(fila, numero) VALUES('D', 8)
+INSERT INTO Butacas(fila, numero) VALUES('D', 9)
+INSERT INTO Butacas(fila, numero) VALUES('D', 10)
+INSERT INTO Butacas(fila, numero) VALUES('E', 1)
+INSERT INTO Butacas(fila, numero) VALUES('E', 2)
+INSERT INTO Butacas(fila, numero) VALUES('E', 3)
+INSERT INTO Butacas(fila, numero) VALUES('E', 4)
+INSERT INTO Butacas(fila, numero) VALUES('E', 5)
+INSERT INTO Butacas(fila, numero) VALUES('E', 6)
+INSERT INTO Butacas(fila, numero) VALUES('E', 7)
+INSERT INTO Butacas(fila, numero) VALUES('E', 8)
+INSERT INTO Butacas(fila, numero) VALUES('E', 9)
+INSERT INTO Butacas(fila, numero) VALUES('E', 10)
+INSERT INTO Butacas(fila, numero) VALUES('F', 1)
+INSERT INTO Butacas(fila, numero) VALUES('F', 2)
+INSERT INTO Butacas(fila, numero) VALUES('F', 3)
+INSERT INTO Butacas(fila, numero) VALUES('F', 4)
+INSERT INTO Butacas(fila, numero) VALUES('F', 5)
+INSERT INTO Butacas(fila, numero) VALUES('F', 6)
+INSERT INTO Butacas(fila, numero) VALUES('F', 7)
+INSERT INTO Butacas(fila, numero) VALUES('F', 8)
+INSERT INTO Butacas(fila, numero) VALUES('F', 9)
+INSERT INTO Butacas(fila, numero) VALUES('F', 10)
+
+
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(1, 1, '27-09-2019', '17:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(1, 1, '27-09-2019', '22:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(2, 2, '27-09-2019', '17:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(2, 2, '27-09-2019', '22:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(3, 3, '27-09-2019', '17:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(3, 3, '27-09-2019', '22:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(4, 4, '27-09-2019', '17:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(4, 4, '27-09-2019', '22:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(5, 5, '27-09-2019', '17:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(5, 5, '27-09-2019', '22:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(6, 6, '27-09-2019', '17:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(6, 6, '27-09-2019', '22:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(7, 1, '27-09-2019', '17:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(7, 2, '27-09-2019', '22:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(8, 3, '27-09-2019', '17:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(8, 4, '27-09-2019', '22:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(9, 5, '27-09-2019', '17:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(9, 6, '27-09-2019', '22:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(10, 1, '27-09-2019', '17:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(10, 2, '27-09-2019', '22:00:00')
+
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(1, 10, '27-09-2017', '17:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(1, 10, '27-09-2017', '22:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(2, 11, '27-09-2017', '17:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(2, 11, '27-09-2017', '22:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(3, 12, '27-09-2017', '17:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(3, 12, '27-09-2017', '22:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(4, 13, '27-09-2017', '17:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(4, 13, '27-09-2017', '22:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(5, 14, '27-09-2017', '17:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(5, 14, '27-09-2017', '22:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(6, 15, '27-09-2017', '17:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(6, 15, '27-09-2017', '22:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(7, 16, '27-09-2017', '17:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(7, 16, '27-09-2017', '22:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(8, 10, '27-09-2017', '17:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(8, 11, '27-09-2017', '22:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(9, 12, '27-09-2017', '17:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(9, 13, '27-09-2017', '22:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(10, 14, '27-09-2017', '17:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(10, 15, '27-09-2017', '22:00:00')
+
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(1, 6, '27-09-2018', '17:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(1, 6, '27-09-2018', '22:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(2, 7, '27-09-2018', '17:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(2, 7, '27-09-2018', '22:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(3, 8, '27-09-2018', '17:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(3, 8, '27-09-2018', '22:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(4, 9, '27-09-2018', '17:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(4, 9, '27-09-2018', '22:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(5, 7, '27-09-2018', '17:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(5, 7, '27-09-2018', '22:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(6, 6, '27-09-2018', '17:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(6, 6, '27-09-2018', '22:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(7, 8, '27-09-2018', '17:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(7, 8, '27-09-2018', '22:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(8, 9, '27-09-2018', '17:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(8, 9, '27-09-2018', '22:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(9, 7, '27-09-2018', '17:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(9, 6, '27-09-2018', '22:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(10, 8, '27-09-2018', '17:00:00')
+INSERT INTO Funciones(id_sala, id_pelicula, fecha, hora) VALUES(10, 9, '27-09-2018', '22:00:00')
+
+
+INSERT INTO Tipos_Compras(descripcion) VALUES('Personal')
+INSERT INTO Tipos_Compras(descripcion) VALUES('Online')
+
+
+INSERT INTO Comprobantes(id_cliente, id_tipo_compra, fecha, monto_total) VALUES(1, 1, '20-09-2019', 0.00)
+INSERT INTO Comprobantes(id_cliente, id_tipo_compra, fecha, monto_total) VALUES(2, 1, '20-09-2019', 0.00)
+INSERT INTO Comprobantes(id_cliente, id_tipo_compra, fecha, monto_total) VALUES(3, 2, '20-09-2019', 0.00)
+INSERT INTO Comprobantes(id_cliente, id_tipo_compra, fecha, monto_total) VALUES(5, 1, '20-09-2019', 0.00)
+INSERT INTO Comprobantes(id_cliente, id_tipo_compra, fecha, monto_total) VALUES(9, 2, '20-09-2019', 0.00)
+INSERT INTO Comprobantes(id_cliente, id_tipo_compra, fecha, monto_total) VALUES(11, 1, '20-09-2019', 0.00)
+INSERT INTO Comprobantes(id_cliente, id_tipo_compra, fecha, monto_total) VALUES(10, 1, '21-09-2019', 0.00)
+INSERT INTO Comprobantes(id_cliente, id_tipo_compra, fecha, monto_total) VALUES(4, 2, '21-09-2019', 0.00)
+INSERT INTO Comprobantes(id_cliente, id_tipo_compra, fecha, monto_total) VALUES(8, 2, '21-09-2019', 0.00)
+INSERT INTO Comprobantes(id_cliente, id_tipo_compra, fecha, monto_total) VALUES(6, 1, '21-09-2019', 0.00)
+INSERT INTO Comprobantes(id_cliente, id_tipo_compra, fecha, monto_total) VALUES(13, 2, '22-09-2019', 0.00)
+INSERT INTO Comprobantes(id_cliente, id_tipo_compra, fecha, monto_total) VALUES(4, 2, '22-09-2019', 0.00)
+INSERT INTO Comprobantes(id_cliente, id_tipo_compra, fecha, monto_total) VALUES(7, 1, '22-09-2019', 0.00)
+INSERT INTO Comprobantes(id_cliente, id_tipo_compra, fecha, monto_total) VALUES(12, 2, '22-09-2019', 0.00)
+INSERT INTO Comprobantes(id_cliente, id_tipo_compra, fecha, monto_total) VALUES(15, 2, '22-09-2019', 0.00)
+INSERT INTO Comprobantes(id_cliente, id_tipo_compra, fecha, monto_total) VALUES(14, 2, '23-09-2019', 0.00)
+INSERT INTO Comprobantes(id_cliente, id_tipo_compra, fecha, monto_total) VALUES(10, 1, '23-09-2019', 0.00)
+INSERT INTO Comprobantes(id_cliente, id_tipo_compra, fecha, monto_total) VALUES(4, 2, '23-09-2019', 0.00)
+INSERT INTO Comprobantes(id_cliente, id_tipo_compra, fecha, monto_total) VALUES(8, 2, '23-09-2019', 0.00)
+INSERT INTO Comprobantes(id_cliente, id_tipo_compra, fecha, monto_total) VALUES(6, 1, '23-09-2019', 0.00)
+INSERT INTO Comprobantes(id_cliente, id_tipo_compra, fecha, monto_total) VALUES(13, 2, '23-09-2019', 0.00)
+INSERT INTO Comprobantes(id_cliente, id_tipo_compra, fecha, monto_total) VALUES(3, 2, '24-09-2019', 0.00)
+INSERT INTO Comprobantes(id_cliente, id_tipo_compra, fecha, monto_total) VALUES(5, 1, '24-09-2019', 0.00)
+INSERT INTO Comprobantes(id_cliente, id_tipo_compra, fecha, monto_total) VALUES(9, 2, '24-09-2019', 0.00)
+INSERT INTO Comprobantes(id_cliente, id_tipo_compra, fecha, monto_total) VALUES(11, 1, '24-09-2019', 0.00)
+INSERT INTO Comprobantes(id_cliente, id_tipo_compra, fecha, monto_total) VALUES(10, 1, '24-09-2019', 0.00)
+
+
+INSERT INTO Tipos_Entradas(descripcion, precio) VALUES('Menor', 30.00)
+INSERT INTO Tipos_Entradas(descripcion, precio) VALUES('Adulto', 60.00)
+
+
+INSERT INTO Promociones(descripcion, porcentaje) VALUES('2x1', 0.50)
+INSERT INTO Promociones(descripcion, porcentaje) VALUES('Descuento Estudiante', 0.75)
+INSERT INTO Promociones(descripcion, porcentaje) VALUES('Descuento Miércoles', 0.70)
+
+
+INSERT INTO Comprobantes_x_Formas_Pago(id_comprobante, id_forma_pago, monto) VALUES(1, 1, 1.00)
+INSERT INTO Comprobantes_x_Formas_Pago(id_comprobante, id_forma_pago, monto) VALUES(2, 1, 1.00)
+INSERT INTO Comprobantes_x_Formas_Pago(id_comprobante, id_forma_pago, monto) VALUES(2, 2, 1.00)
+INSERT INTO Comprobantes_x_Formas_Pago(id_comprobante, id_forma_pago, monto) VALUES(4, 2, 1.00)
+INSERT INTO Comprobantes_x_Formas_Pago(id_comprobante, id_forma_pago, monto) VALUES(4, 3, 1.00)
+INSERT INTO Comprobantes_x_Formas_Pago(id_comprobante, id_forma_pago, monto) VALUES(6, 1, 1.00)
+INSERT INTO Comprobantes_x_Formas_Pago(id_comprobante, id_forma_pago, monto) VALUES(7, 1, 1.00)
+INSERT INTO Comprobantes_x_Formas_Pago(id_comprobante, id_forma_pago, monto) VALUES(10, 2, 1.00)
+INSERT INTO Comprobantes_x_Formas_Pago(id_comprobante, id_forma_pago, monto) VALUES(13, 3, 1.00)
+INSERT INTO Comprobantes_x_Formas_Pago(id_comprobante, id_forma_pago, monto) VALUES(17, 1, 1.00)
+INSERT INTO Comprobantes_x_Formas_Pago(id_comprobante, id_forma_pago, monto) VALUES(20, 1, 1.00)
+INSERT INTO Comprobantes_x_Formas_Pago(id_comprobante, id_forma_pago, monto) VALUES(20, 2, 1.00)
+INSERT INTO Comprobantes_x_Formas_Pago(id_comprobante, id_forma_pago, monto) VALUES(23, 2, 1.00)
+INSERT INTO Comprobantes_x_Formas_Pago(id_comprobante, id_forma_pago, monto) VALUES(25, 1, 1.00)
+INSERT INTO Comprobantes_x_Formas_Pago(id_comprobante, id_forma_pago, monto) VALUES(26, 1, 1.00)
+INSERT INTO Comprobantes_x_Formas_Pago(id_comprobante, id_forma_pago, monto) VALUES(3, 2, 1.00)
+INSERT INTO Comprobantes_x_Formas_Pago(id_comprobante, id_forma_pago, monto) VALUES(5, 2, 1.00)
+INSERT INTO Comprobantes_x_Formas_Pago(id_comprobante, id_forma_pago, monto) VALUES(8, 3, 1.00)
+INSERT INTO Comprobantes_x_Formas_Pago(id_comprobante, id_forma_pago, monto) VALUES(9, 2, 1.00)
+INSERT INTO Comprobantes_x_Formas_Pago(id_comprobante, id_forma_pago, monto) VALUES(12, 2, 1.00)
+INSERT INTO Comprobantes_x_Formas_Pago(id_comprobante, id_forma_pago, monto) VALUES(15, 3, 1.00)
+INSERT INTO Comprobantes_x_Formas_Pago(id_comprobante, id_forma_pago, monto) VALUES(16, 2, 1.00)
+INSERT INTO Comprobantes_x_Formas_Pago(id_comprobante, id_forma_pago, monto) VALUES(18, 2, 1.00)
+INSERT INTO Comprobantes_x_Formas_Pago(id_comprobante, id_forma_pago, monto) VALUES(19, 3, 1.00)
+INSERT INTO Comprobantes_x_Formas_Pago(id_comprobante, id_forma_pago, monto) VALUES(22, 3, 1.00)
+INSERT INTO Comprobantes_x_Formas_Pago(id_comprobante, id_forma_pago, monto) VALUES(24, 2, 1.00)
+
+
+
+UPDATE Comprobantes 
+SET monto_total = monto_total + 30
+WHERE id_comprobante IN (1, 2, 5, 15, 24, 25, 26)
+
+UPDATE Comprobantes 
+SET monto_total = monto_total + 30
+WHERE id_comprobante IN (1, 15, 24, 25)
+
+UPDATE Comprobantes 
+SET monto_total = monto_total + 60
+WHERE id_comprobante IN (1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25)
+
+UPDATE Comprobantes 
+SET monto_total = monto_total + 60
+WHERE id_comprobante IN (3,4,5,7,8,11,12,14,18,19,20,21,23,25)
+
+UPDATE Comprobantes 
+SET monto_total = monto_total + 60
+WHERE id_comprobante IN (4,8,12,14,20)
+
+UPDATE Comprobantes 
+SET monto_total = monto_total + 60
+WHERE id_comprobante IN (4,8,12,20)
+
+UPDATE Comprobantes 
+SET monto_total = monto_total + 100
+WHERE id_comprobante IN (2,6,10,13,17,22,26)
+
+UPDATE Comprobantes 
+SET monto_total = monto_total + 150
+WHERE id_comprobante IN (9,16)
+
+UPDATE Comprobantes 
+SET monto_total = monto_total + 100
+WHERE id_comprobante IN (1,3,4,5,7,8,12,15,18,20,23,24,25)
+
+UPDATE Comprobantes 
+SET monto_total = monto_total + 150
+WHERE id_comprobante IN (11,14,19,21)
+
+UPDATE Comprobantes 
+SET monto_total = monto_total + 100
+WHERE id_comprobante IN (1,4,5,8,12,15,20,24,25)
+
+UPDATE Comprobantes 
+SET monto_total = monto_total + 150
+WHERE id_comprobante IN (14)
+
+UPDATE Comprobantes 
+SET monto_total = monto_total + 100
+WHERE id_comprobante IN (4,8,12,20,25)
+
+
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(1, 1, 1, null)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(1, 1, 1, null)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(1, 1, 2, null)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(2, 1, 1, null)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(3, 2, 2, 1)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(3, 2, 2, 1)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(4, 3, 2, 1)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(4, 3, 2, 1)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(4, 3, 2, 1)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(4, 3, 2, 1)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(5, 3, 2, null)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(5, 3, 2, null)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(5, 3, 1, null)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(6, 2, 2, null)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(7, 4, 2, 1)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(7, 4, 2, 1)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(8, 4, 2, null)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(8, 4, 2, null)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(8, 4, 2, null)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(8, 4, 2, null)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(10, 5, 2, null)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(12, 5, 2, 1)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(12, 5, 2, 1)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(12, 5, 2, 1)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(12, 5, 2, 1)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(13, 5, 2, null)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(15, 5, 2, null)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(15, 5, 1, 1)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(15, 5, 1, 1)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(17, 6, 2, null)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(18, 6, 2, 1)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(18, 6, 2, 1)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(20, 6, 2, 1)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(20, 6, 2, 1)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(20, 6, 2, 1)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(20, 6, 2, 1)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(22, 7, 2, 2)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(23, 7, 2, 1)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(23, 7, 2, 1)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(24, 7, 2, null)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(24, 7, 1, null)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(24, 7, 1, null)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(25, 7, 2, 1)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(25, 7, 2, 1)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(25, 7, 1, 1)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(25, 7, 1, 1)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(26, 8, 1, null)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(9, 10, 2, null)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(11, 10, 2, 1)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(11, 10, 2, 1)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(14, 10, 2, null)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(14, 10, 2, null)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(14, 10, 2, null)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(16, 10, 2, null)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(19, 10, 2, 1)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(19, 10, 2, 1)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(21, 10, 2, 1)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(21, 10, 2, 1)
+
+
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(1, 1, 1, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(2, 1, 2, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(3, 1, 3, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(4, 2, 4, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(5, 3, 5, 1)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(6, 3, 6, 1)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(7, 5, 1, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(8, 5, 2, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(9, 5, 3, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(10, 5, 4, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(11, 9, 5, 1)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(12, 9, 6, 1)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(13, 9, 7, 1)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(14, 11, 8, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(15, 10, 9, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(16, 10, 10, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(17, 4, 11, 1)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(18, 4, 12, 1)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(19, 4, 13, 1)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(20, 4, 14, 1)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(21, 6, 1, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(22, 4, 2, 1)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(23, 4, 3, 1)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(24, 4, 4, 1)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(25, 4, 5, 1)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(26, 7, 6, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(27, 15, 7, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(28, 15, 8, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(29, 15, 9, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(30, 10, 10, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(31, 4, 11, 1)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(32, 4, 12, 1)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(33, 6, 13, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(34, 6, 14, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(35, 6, 15, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(36, 6, 16, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(37, 3, 1, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(38, 5, 2, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(39, 5, 3, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(40, 9, 4, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(41, 9, 5, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(42, 9, 6, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(43, 11, 7, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(44, 11, 8, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(45, 11, 9, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(46, 11, 10, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(47, 10, 11, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(49, 13, 2, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(50, 13, 3, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(51, 12, 7, 1)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(52, 12, 8, 1)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(53, 12, 9, 1)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(54, 14, 11, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(57, 13, 15, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(58, 13, 16, 0)
+
+
+-- ********************************************************************************************************************************************
+
+
+INSERT INTO Comprobantes(id_cliente, id_tipo_compra, fecha, monto_total) VALUES(3, 1, '24-09-2018', 480.00)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(27, 41, 2, null)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(27, 41, 2, null)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(27, 41, 2, null)
+INSERT INTO Comprobantes_x_Formas_Pago(id_comprobante, id_forma_pago, monto) VALUES(27, 3, 480.00)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(59, 3, 1, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(60, 3, 2, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(61, 3, 3, 0)
+
+
+INSERT INTO Comprobantes(id_cliente, id_tipo_compra, fecha, monto_total) VALUES(7, 1, '25-09-2018', 320.00)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(28, 41, 2, null)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(28, 41, 2, null)
+INSERT INTO Comprobantes_x_Formas_Pago(id_comprobante, id_forma_pago, monto) VALUES(28, 1, 320.00)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(62, 7, 7, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(63, 7, 8, 0)
+
+
+INSERT INTO Comprobantes(id_cliente, id_tipo_compra, fecha, monto_total) VALUES(11, 2, '23-09-2018', 160.00)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(29, 41, 2, null)
+INSERT INTO Comprobantes_x_Formas_Pago(id_comprobante, id_forma_pago, monto) VALUES(29, 2, 160.00)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(64, 11, 4, 1)
+
+
+INSERT INTO Comprobantes(id_cliente, id_tipo_compra, fecha, monto_total) VALUES(2, 1, '25-09-2018', 320.00)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(30, 41, 2, null)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(30, 41, 2, null)
+INSERT INTO Comprobantes_x_Formas_Pago(id_comprobante, id_forma_pago, monto) VALUES(30, 3, 320.00)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(65, 2, 5, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(66, 2, 6, 0)
+
+
+INSERT INTO Comprobantes(id_cliente, id_tipo_compra, fecha, monto_total) VALUES(13, 2, '24-09-2018', 640.00)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(31, 42, 2, null)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(31, 42, 2, null)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(31, 42, 2, null)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(31, 42, 2, null)
+INSERT INTO Comprobantes_x_Formas_Pago(id_comprobante, id_forma_pago, monto) VALUES(31, 2, 640.00)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(67, 13, 1, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(68, 13, 2, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(69, 13, 3, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(70, 13, 4, 0)
+
+
+INSERT INTO Comprobantes(id_cliente, id_tipo_compra, fecha, monto_total) VALUES(1, 1, '25-09-2018', 290.00)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(32, 42, 2, null)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(32, 42, 1, null)
+INSERT INTO Comprobantes_x_Formas_Pago(id_comprobante, id_forma_pago, monto) VALUES(32, 3, 290.00)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(71, 1, 5, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(72, 1, 6, 0)
+
+
+INSERT INTO Comprobantes(id_cliente, id_tipo_compra, fecha, monto_total) VALUES(7, 2, '23-09-2018', 450.00)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(33, 42, 2, null)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(33, 42, 2, null)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(33, 42, 1, null)
+INSERT INTO Comprobantes_x_Formas_Pago(id_comprobante, id_forma_pago, monto) VALUES(33, 3, 450.00)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(73, 7, 7, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(74, 7, 8, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(75, 7, 9, 0)
+
+
+INSERT INTO Comprobantes(id_cliente, id_tipo_compra, fecha, monto_total) VALUES(4, 1, '24-09-2018', 320.00)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(34, 43, 2, null)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(34, 43, 2, null)
+INSERT INTO Comprobantes_x_Formas_Pago(id_comprobante, id_forma_pago, monto) VALUES(34, 1, 320.00)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(76, 4, 1, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(77, 4, 2, 0)
+
+
+INSERT INTO Comprobantes(id_cliente, id_tipo_compra, fecha, monto_total) VALUES(12, 2, '24-09-2018', 160.00)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(35, 43, 2, null)
+INSERT INTO Comprobantes_x_Formas_Pago(id_comprobante, id_forma_pago, monto) VALUES(35, 2, 160.00)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(78, 12, 4, 1)
+
+
+INSERT INTO Comprobantes(id_cliente, id_tipo_compra, fecha, monto_total) VALUES(10, 2, '26-09-2018', 320.00)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(36, 43, 2, null)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(36, 43, 2, null)
+INSERT INTO Comprobantes_x_Formas_Pago(id_comprobante, id_forma_pago, monto) VALUES(36, 2, 320.00)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(79, 10, 5, 1)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(80, 10, 6, 1)
+
+
+INSERT INTO Comprobantes(id_cliente, id_tipo_compra, fecha, monto_total) VALUES(5, 1, '24-09-2018', 640.00)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(37, 43, 2, null)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(37, 43, 2, null)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(37, 43, 2, null)
+INSERT INTO Detalle_Comprobantes(id_comprobante, id_funcion, id_tipo_entrada, id_promocion) VALUES(37, 43, 2, null)
+INSERT INTO Comprobantes_x_Formas_Pago(id_comprobante, id_forma_pago, monto) VALUES(37, 1, 640.00)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(81, 5, 7, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(82, 5, 8, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(83, 5, 9, 0)
+INSERT INTO Tickets(id_detalle_comprobante, id_cliente, id_butaca, reserva) VALUES(84, 5, 10, 0)

@@ -1,0 +1,70 @@
+C:\Users\Leo\source\repos\tpintegrador\tpintegrador\bin\Debug\tpintegrador.exe.config
+C:\Users\Leo\source\repos\tpintegrador\tpintegrador\bin\Debug\tpintegrador.exe
+C:\Users\Leo\source\repos\tpintegrador\tpintegrador\bin\Debug\tpintegrador.pdb
+C:\Users\Leo\source\repos\tpintegrador\tpintegrador\obj\Debug\tpintegrador.csprojAssemblyReference.cache
+C:\Users\Leo\source\repos\tpintegrador\tpintegrador\obj\Debug\tpintegrador.Form1.resources
+C:\Users\Leo\source\repos\tpintegrador\tpintegrador\obj\Debug\tpintegrador.Properties.Resources.resources
+C:\Users\Leo\source\repos\tpintegrador\tpintegrador\obj\Debug\tpintegrador.csproj.GenerateResource.cache
+C:\Users\Leo\source\repos\tpintegrador\tpintegrador\obj\Debug\tpintegrador.csproj.CoreCompileInputs.cache
+C:\Users\Leo\source\repos\tpintegrador\tpintegrador\obj\Debug\tpintegrador.exe
+C:\Users\Leo\source\repos\tpintegrador\tpintegrador\obj\Debug\tpintegrador.pdb
+C:\Users\Leo\source\repos\tpintegrador\tpintegrador\obj\Debug\tpintegrador.Consultas.resources
+C:\Users\Leo\source\repos\tpintegrador\tpintegrador\obj\Debug\tpintegrador.frmClientes.resources
+C:\Users\Emiliano\Downloads\tpintegrador\tpintegrador\obj\Debug\tpintegrador.csprojAssemblyReference.cache
+C:\Users\Emiliano\Downloads\tpintegrador\tpintegrador\obj\Debug\tpintegrador.frmClientes.resources
+C:\Users\Emiliano\Downloads\tpintegrador\tpintegrador\obj\Debug\tpintegrador.Properties.Resources.resources
+C:\Users\Emiliano\Downloads\tpintegrador\tpintegrador\obj\Debug\tpintegrador.csproj.GenerateResource.cache
+C:\Users\Emiliano\Downloads\tpintegrador\tpintegrador\obj\Debug\tpintegrador.exe
+C:\Users\Emiliano\Downloads\tpintegrador\tpintegrador\obj\Debug\tpintegrador.pdb
+C:\Users\Emiliano\Downloads\tpintegrador\tpintegrador\bin\Debug\tpintegrador.exe.config
+C:\Users\Emiliano\Downloads\tpintegrador\tpintegrador\bin\Debug\tpintegrador.exe
+C:\Users\Emiliano\Downloads\tpintegrador\tpintegrador\bin\Debug\tpintegrador.pdb
+C:\Users\Emiliano\Downloads\tpintegrador\tpintegrador\bin\Debug\CrystalDecisions.CrystalReports.Engine.dll
+C:\Users\Emiliano\Downloads\tpintegrador\tpintegrador\bin\Debug\CrystalDecisions.ReportSource.dll
+C:\Users\Emiliano\Downloads\tpintegrador\tpintegrador\bin\Debug\CrystalDecisions.Shared.dll
+C:\Users\Emiliano\Downloads\tpintegrador\tpintegrador\bin\Debug\CrystalDecisions.Windows.Forms.dll
+C:\Users\Emiliano\Downloads\tpintegrador\tpintegrador\bin\Debug\FlashControlV71.dll
+C:\Users\Emiliano\Downloads\tpintegrador\tpintegrador\bin\Debug\CrystalDecisions.ReportAppServer.DataDefModel.dll
+C:\Users\Emiliano\Downloads\tpintegrador\tpintegrador\bin\Debug\CrystalDecisions.ReportAppServer.ClientDoc.dll
+C:\Users\Emiliano\Downloads\tpintegrador\tpintegrador\bin\Debug\CrystalDecisions.ReportAppServer.ReportDefModel.dll
+C:\Users\Emiliano\Downloads\tpintegrador\tpintegrador\bin\Debug\CrystalDecisions.ReportAppServer.Controllers.dll
+C:\Users\Emiliano\Downloads\tpintegrador\tpintegrador\bin\Debug\CrystalDecisions.ReportAppServer.CommLayer.dll
+C:\Users\Emiliano\Downloads\tpintegrador\tpintegrador\bin\Debug\CrystalDecisions.ReportAppServer.DataSetConversion.dll
+C:\Users\Emiliano\Downloads\tpintegrador\tpintegrador\bin\Debug\CrystalDecisions.ReportAppServer.Prompting.dll
+C:\Users\Emiliano\Downloads\tpintegrador\tpintegrador\bin\Debug\CrystalDecisions.ReportAppServer.XmlSerialize.dll
+C:\Users\Emiliano\Downloads\tpintegrador\tpintegrador\bin\Debug\CrystalDecisions.ReportAppServer.CubeDefModel.dll
+C:\Users\Emiliano\Downloads\tpintegrador\tpintegrador\bin\Debug\CrystalDecisions.ReportAppServer.CommonObjectModel.dll
+C:\Users\Emiliano\Downloads\tpintegrador\tpintegrador\bin\Debug\CrystalDecisions.ReportAppServer.ObjectFactory.dll
+C:\Users\Emiliano\Downloads\tpintegrador\tpintegrador\bin\Debug\ShockwaveFlashObjects.dll
+C:\Users\Emiliano\Downloads\tpintegrador\tpintegrador\bin\Debug\CrystalDecisions.ReportAppServer.CommonControls.dll
+C:\Users\Emiliano\Downloads\tpintegrador\tpintegrador\bin\Debug\stdole.dll
+C:\Users\Emiliano\Downloads\tpintegrador\tpintegrador\obj\Debug\tpintegrador.csproj.CopyComplete
+C:\Users\Emiliano\Downloads\tpintegrador\tpintegrador\obj\Debug\tpintegrador.frmReporte.resources
+C:\Users\Emiliano\Downloads\tpintegrador\tpintegrador\obj\Debug\tpintegrador.frmMenuInicial.resources
+C:\Users\Leo\Downloads\PROG2 - TP INTEGRADOR\tpintegrador\bin\Debug\tpintegrador.exe.config
+C:\Users\Leo\Downloads\PROG2 - TP INTEGRADOR\tpintegrador\bin\Debug\tpintegrador.exe
+C:\Users\Leo\Downloads\PROG2 - TP INTEGRADOR\tpintegrador\bin\Debug\tpintegrador.pdb
+C:\Users\Leo\Downloads\PROG2 - TP INTEGRADOR\tpintegrador\bin\Debug\CrystalDecisions.ReportAppServer.DataDefModel.dll
+C:\Users\Leo\Downloads\PROG2 - TP INTEGRADOR\tpintegrador\bin\Debug\CrystalDecisions.ReportAppServer.ClientDoc.dll
+C:\Users\Leo\Downloads\PROG2 - TP INTEGRADOR\tpintegrador\bin\Debug\CrystalDecisions.ReportAppServer.ReportDefModel.dll
+C:\Users\Leo\Downloads\PROG2 - TP INTEGRADOR\tpintegrador\bin\Debug\CrystalDecisions.ReportAppServer.Controllers.dll
+C:\Users\Leo\Downloads\PROG2 - TP INTEGRADOR\tpintegrador\bin\Debug\CrystalDecisions.ReportAppServer.CommLayer.dll
+C:\Users\Leo\Downloads\PROG2 - TP INTEGRADOR\tpintegrador\bin\Debug\CrystalDecisions.ReportAppServer.DataSetConversion.dll
+C:\Users\Leo\Downloads\PROG2 - TP INTEGRADOR\tpintegrador\bin\Debug\CrystalDecisions.ReportAppServer.Prompting.dll
+C:\Users\Leo\Downloads\PROG2 - TP INTEGRADOR\tpintegrador\bin\Debug\CrystalDecisions.ReportAppServer.XmlSerialize.dll
+C:\Users\Leo\Downloads\PROG2 - TP INTEGRADOR\tpintegrador\bin\Debug\CrystalDecisions.ReportAppServer.CubeDefModel.dll
+C:\Users\Leo\Downloads\PROG2 - TP INTEGRADOR\tpintegrador\bin\Debug\CrystalDecisions.ReportAppServer.CommonObjectModel.dll
+C:\Users\Leo\Downloads\PROG2 - TP INTEGRADOR\tpintegrador\bin\Debug\CrystalDecisions.ReportAppServer.ObjectFactory.dll
+C:\Users\Leo\Downloads\PROG2 - TP INTEGRADOR\tpintegrador\bin\Debug\ShockwaveFlashObjects.dll
+C:\Users\Leo\Downloads\PROG2 - TP INTEGRADOR\tpintegrador\bin\Debug\CrystalDecisions.ReportAppServer.CommonControls.dll
+C:\Users\Leo\Downloads\PROG2 - TP INTEGRADOR\tpintegrador\bin\Debug\stdole.dll
+C:\Users\Leo\Downloads\PROG2 - TP INTEGRADOR\tpintegrador\obj\Debug\tpintegrador.csprojAssemblyReference.cache
+C:\Users\Leo\Downloads\PROG2 - TP INTEGRADOR\tpintegrador\obj\Debug\tpintegrador.frmReporte.resources
+C:\Users\Leo\Downloads\PROG2 - TP INTEGRADOR\tpintegrador\obj\Debug\tpintegrador.frmMenuInicial.resources
+C:\Users\Leo\Downloads\PROG2 - TP INTEGRADOR\tpintegrador\obj\Debug\tpintegrador.frmClientes.resources
+C:\Users\Leo\Downloads\PROG2 - TP INTEGRADOR\tpintegrador\obj\Debug\tpintegrador.Properties.Resources.resources
+C:\Users\Leo\Downloads\PROG2 - TP INTEGRADOR\tpintegrador\obj\Debug\tpintegrador.csproj.GenerateResource.cache
+C:\Users\Leo\Downloads\PROG2 - TP INTEGRADOR\tpintegrador\obj\Debug\tpintegrador.csproj.CoreCompileInputs.cache
+C:\Users\Leo\Downloads\PROG2 - TP INTEGRADOR\tpintegrador\obj\Debug\tpintegrador.csproj.CopyComplete
+C:\Users\Leo\Downloads\PROG2 - TP INTEGRADOR\tpintegrador\obj\Debug\tpintegrador.exe
+C:\Users\Leo\Downloads\PROG2 - TP INTEGRADOR\tpintegrador\obj\Debug\tpintegrador.pdb
