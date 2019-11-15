@@ -48,6 +48,7 @@ namespace tpintegrador
         private void btnTodo_Click(object sender, EventArgs e)
         {
             reportClientes report = new reportClientes();
+            string consultaSql = $"SELECT * FROM Clientes";
             crystalReportViewer1.ReportSource = report;
             crystalReportViewer1.Refresh();
             crystalReportViewer1.Show();
@@ -123,6 +124,7 @@ namespace tpintegrador
             crystalReportViewer1.Show();
         }
 
+        //todo lo siguiente se puede resolver con un metodo, queda pendiente
         private void chkNombre_CheckedChanged(object sender, EventArgs e)
         {
             if (chkNombre.Checked)

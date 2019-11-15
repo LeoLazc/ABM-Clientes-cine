@@ -207,61 +207,32 @@ namespace tpintegrador
                         lstClientes.Items.Clear();
                         cargarLista("Clientes");
                     }
-                    //else
-                    //{
-                    //    MessageBox.Show("Este cliente ya se encuentra registrado...");
-                    //    habilitar(true);
-                    //    txtId.Focus();
-                    //}
-                        
-                else
-                {
-                    sql = $"UPDATE Clientes SET nombre = '{cl.pNombre}', " +
-                                              $"apellido = '{cl.pApellido}', " +
-                                              $"dni = {cl.pDni}, " +
-                                              $"fecha_nac = '{cl.pFechaNac.ToShortDateString()}', " +
-                                              $"calle_direccion = '{cl.pDireccion}', " +
-                                              $"nro_direccion = {cl.pAltura}, " +
-                                              $"nro_telefono = {cl.pTelefono}, " +
-                                              $"email = '{cl.pEmail}', " +
-                                              $"nacionalidad = {cl.pNacionalidad}, " +
-                                              $"fecha_alta = '{cl.pFechaAlta.ToShortDateString()}' " +
-                                              $"WHERE id_cliente = {cl.pId}";
-                    datos.actualizar(sql);
-                    lstClientes.Items.Clear();
-                    cargarLista("Clientes");
-                    lstClientes.SelectedIndex = cl.pId -1;
-                }
-                habilitar(false);
-                nuevo = false;
+                    else
+                    {
+                        sql = $"UPDATE Clientes SET nombre = '{cl.pNombre}', " +
+                                                  $"apellido = '{cl.pApellido}', " +
+                                                  $"dni = {cl.pDni}, " +
+                                                  $"fecha_nac = '{cl.pFechaNac.ToShortDateString()}', " +
+                                                  $"calle_direccion = '{cl.pDireccion}', " +
+                                                  $"nro_direccion = {cl.pAltura}, " +
+                                                  $"nro_telefono = {cl.pTelefono}, " +
+                                                  $"email = '{cl.pEmail}', " +
+                                                  $"nacionalidad = {cl.pNacionalidad}, " +
+                                                  $"fecha_alta = '{cl.pFechaAlta.ToShortDateString()}' " +
+                                                  $"WHERE id_cliente = {cl.pId}";
+                        datos.actualizar(sql);
+                        lstClientes.Items.Clear();
+                        cargarLista("Clientes");
+                        lstClientes.SelectedIndex = cl.pId -1;
+                    }
+                    habilitar(false);
+                    nuevo = false;
             }
         }
 
         private bool validar()
         {
-            //if(txtId.Text=="")
-            //{
-            //    MessageBox.Show("Debe completar el ID de cliente...");
-            //    txtId.Focus();
-            //    return false;
-            //}
-            //else
-            //{
-            //    try
-            //    {
-            //        Int32.Parse(txtId.Text);
-            //    }
-            //    catch
-            //    {
-            //        MessageBox.Show("Coloque sólo números.",
-            //            "Error",
-            //            MessageBoxButtons.OK,
-            //            MessageBoxIcon.Error);
-            //        txtId.Focus();
-            //        return false;
-            //    }
-            //}
-
+            //no hace falta validacion para id, es identity
             if (txtNombre.Text == "")
             {
                 MessageBox.Show("Debe completar el nombre del cliente...");
